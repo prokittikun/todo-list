@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { getCurrentDate } from "./services/get-current-date";
 import Dropdown from "./components/dropdown";
 import Table from "./components/work-table";
+import CallApi from "./services/callApi";
 
 function addDays(dateTime, count_days = 0) {
   return new Date(new Date(dateTime).setDate(dateTime.getDate() + count_days));
@@ -15,10 +16,31 @@ function addDays(dateTime, count_days = 0) {
 function App() {
   const currentDate = new Date();
   const [startDate, setStartDate] = useState(new Date());
-  const [endDateStart, setEndDateStart] = useState(addDays(currentDate, 1));
+  const [endDate, setEndDate] = useState(addDays(currentDate, 1));
   useEffect(() => {
-    setEndDateStart(addDays(startDate, 1));
+    setEndDate(addDays(startDate, 1));
   }, [startDate]);
+  const [projectName, setProjectName] = useState("");
+  const [projectDetail, setProjectDetail] = useState("");
+  const [programingLanguage, setProgramingLanguage] = useState("html-css");
+  const api = new CallApi();
+  async function addData() {
+    const language = programingLanguage;
+    const name = projectName;
+    const detail = projectDetail;
+    const sDate = startDate.toJSON();
+    const eDate = endDate.toJSON();
+    const formData = {
+      projectName: name,
+      projectDetail: detail,
+      projectLanguage: language,
+      startDate: sDate,
+      endDate: eDate,
+    };
+    api.api(true, "addData", formData).then((response) => {
+      console.log(response);
+    });
+  }
   return (
     <div className="App">
       <div className="container">
@@ -45,6 +67,7 @@ function App() {
                     type="text"
                     id="header"
                     className="form-control"
+                    onChange={(e) => setProjectName(e.target.value)}
                   />
                 </div>
               </div>
@@ -58,6 +81,7 @@ function App() {
                     type="text"
                     id="header"
                     className="form-control"
+                    onChange={(e) => setProjectDetail(e.target.value)}
                   />
                 </div>
               </div>
@@ -66,7 +90,9 @@ function App() {
                   <label htmlFor="header">
                     <h5>ภาษา/framework ที่เลือกใช้</h5>
                   </label>
-                  <Dropdown onSelect={(x)=> console.log(x)}></Dropdown>
+                  <Dropdown
+                    onSelect={(x) => setProgramingLanguage(x)}
+                  ></Dropdown>
                 </div>
               </div>
               <div className="col-sm-4">
@@ -93,15 +119,18 @@ function App() {
                     // disabledKeyboardNavigation
                     // showYearDropdown
                     className="form-control"
-                    selected={endDateStart}
-                    minDate={endDateStart}
-                    onChange={(date) => setEndDateStart(date)}
+                    selected={endDate}
+                    minDate={endDate}
+                    onChange={(date) => setEndDate(date)}
                   />
                 </div>
               </div>
             </div>
             <div className="text-center">
-              <button className="form-control btn btn-outline-success btn-lg">
+              <button
+                className="form-control btn btn-outline-success btn-lg"
+                onClick={() => addData()}
+              >
                 เพิ่ม
               </button>
             </div>
