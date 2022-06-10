@@ -1,6 +1,5 @@
 import axios from "axios";
 import { environment } from "../env/env";
-import { useEffect, useState } from "react";
 
 export default class CallApi {
   /**
@@ -17,14 +16,9 @@ export default class CallApi {
     //   const data = await x.json();
     //   return data;
     }
-    // if (!haveBody && path) {
-    //   console.log("get");
-    //   let data;
-    //   axios.get(`${environment.url}/${path}`).then((res) => {
-    //     data = res.data;
-    //     // this.setState({ persons });
-    //   });
-    //   return data;
-    // }
+    if (!haveBody && path) {
+      const x = await axios.get(`${environment.url}/${path}`);
+      return x.data
+    }
   }
 }

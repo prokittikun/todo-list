@@ -1,10 +1,9 @@
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
 import "./App.css";
 import { css, cx } from "@emotion/css";
 import DatePicker from "react-datepicker";
 import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import { getCurrentDate } from "./services/get-current-date";
 import Dropdown from "./components/dropdown";
 import Table from "./components/work-table";
 import CallApi from "./services/callApi";
@@ -17,13 +16,16 @@ function App() {
   const currentDate = new Date();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(addDays(currentDate, 1));
-  useEffect(() => {
-    setEndDate(addDays(startDate, 1));
-  }, [startDate]);
   const [projectName, setProjectName] = useState("");
   const [projectDetail, setProjectDetail] = useState("");
   const [programingLanguage, setProgramingLanguage] = useState("html-css");
+  const [newData, setNewData] = useState(false);
   const api = new CallApi();
+
+  useEffect(() => {
+    setEndDate(addDays(startDate, 1));
+  }, [startDate]);
+
   async function addData() {
     const language = programingLanguage;
     const name = projectName;
@@ -38,7 +40,10 @@ function App() {
       endDate: eDate,
     };
     api.api(true, "addData", formData).then((response) => {
-      console.log(response);
+      if (response.resCode === "0000") {
+        setNewData(response);
+        console.log(response);
+      }
     });
   }
   return (
@@ -144,7 +149,7 @@ function App() {
             />
             <div className="text-center">
               <h4>ตารางงาน</h4>
-              <Table></Table>
+              <Table data={newData}></Table>
             </div>
           </div>
         </div>
