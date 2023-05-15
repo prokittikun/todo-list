@@ -95,9 +95,7 @@ export default function Table(props) {
         {
           data.length === 0 && (
             // if(data){
-            <>
               <div className="text-center">ไม่มีงานที่ต้องทำ</div>
-            </>
           )
           // }
         }

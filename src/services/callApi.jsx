@@ -12,6 +12,7 @@ export default class CallApi {
   async api(haveBody = Boolean, path, body = {}) {
     if (haveBody && body && path) {
       const x = await axios.post(`${environment.url}/${path}`, body);
+
       return x.data
     //   const data = await x.json();
     //   return data;

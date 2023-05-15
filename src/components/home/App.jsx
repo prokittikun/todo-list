@@ -4,9 +4,11 @@ import { css, cx } from "@emotion/css";
 import DatePicker from "react-datepicker";
 import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import Dropdown from "./components/dropdown";
-import Table from "./components/work-table";
-import CallApi from "./services/callApi";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import Dropdown from "../dropdown";
+import Table from "../work-table";
+import Cookies from "universal-cookie";
+import CallApi from "../../services/callApi";
 
 function addDays(dateTime, count_days = 0) {
   return new Date(new Date(dateTime).setDate(dateTime.getDate() + count_days));
@@ -20,8 +22,21 @@ function App() {
   const [projectDetail, setProjectDetail] = useState("");
   const [programingLanguage, setProgramingLanguage] = useState("html-css");
   const [newData, setNewData] = useState(false);
+  const navigate = useNavigate();
   const api = new CallApi();
 
+  useEffect(() => {
+    const cookies = new Cookies();
+    const loginData = cookies.get("login");
+    console.log(loginData);
+    if (loginData) {
+      if (loginData.status !== "true") {
+        navigate("/");
+      }
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
   useEffect(() => {
     setEndDate(addDays(startDate, 1));
   }, [startDate]);
@@ -36,9 +51,11 @@ function App() {
       projectName: name,
       projectDetail: detail,
       projectLanguage: language,
+      projectStatus: "todo",
       startDate: sDate,
       endDate: eDate,
     };
+
     api.api(true, "addData", formData).then((response) => {
       if (response.resCode === "0000") {
         setNewData(response);
